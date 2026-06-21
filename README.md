@@ -1,9 +1,11 @@
 # Vertical Stack In Card
 
-![Version](https://img.shields.io/github/v/release/ofekashery/vertical-stack-in-card)
-![Downloads](https://img.shields.io/github/downloads/ofekashery/vertical-stack-in-card/total)
-![Stars](https://img.shields.io/github/stars/ofekashery/vertical-stack-in-card)
-![HACS](https://img.shields.io/badge/HACS-Default-41BDF5.svg)
+[![Release][release-shield]][releases]
+[![Downloads][downloads-shield]][releases]
+[![Stars][stars-shield]][stars]
+[![HACS][hacs-shield]][hacs]
+[![CI][ci-shield]][ci]
+[![License][license-shield]](LICENSE)
 
 **Vertical Stack In Card** is a custom Lovelace card for Home Assistant, allowing you to group multiple cards into a single sleek card. It offers a clean, organized way to display multiple cards in your Home Assistant dashboard.
 
@@ -11,13 +13,13 @@
 
 ## Configuration Options
 
-| Name         | Type    | Default | Description                                       |
-| ------------ | ------- | ------- | ------------------------------------------------- |
-| `type`       | string  | N/A     | Must be `custom:vertical-stack-in-card`.          |
-| `cards`      | list    | N/A     | List of cards to include.                         |
-| `title`      | string  | None    | Optional. Title displayed at the top of the card. |
-| `horizontal` | boolean | false   | Optional. Whatever stack cards horizontally.      |
-| `styles`     | object  | None    | Optional. Add custom CSS for advanced styling.    |
+| Name         | Type    | Default | Description                                        |
+| ------------ | ------- | ------- | -------------------------------------------------- |
+| `type`       | string  | N/A     | Must be `custom:vertical-stack-in-card`.           |
+| `cards`      | list    | N/A     | List of cards to include.                          |
+| `title`      | string  | None    | Optional. Title displayed at the top of the card.  |
+| `horizontal` | boolean | false   | Optional. Whether to stack cards horizontally.     |
+| `styles`     | object  | None    | Optional. Add custom CSS for advanced styling.     |
 
 ## Installation
 
@@ -29,10 +31,10 @@
 
 ### Manual Installation
 
-Download the [`vertical-stack-in-card.js`](https://raw.githubusercontent.com/ofekashery/vertical-stack-in-card/master/vertical-stack-in-card.js) into your `<config directory>/www` directory.
+Download [`vertical-stack-in-card.js`](https://raw.githubusercontent.com/foXaCe/vertical-stack-in-card/master/vertical-stack-in-card.js) into your `<config directory>/www` directory.
 
 ```bash
-wget https://raw.githubusercontent.com/ofekashery/vertical-stack-in-card/master/vertical-stack-in-card.js
+wget https://raw.githubusercontent.com/foXaCe/vertical-stack-in-card/master/vertical-stack-in-card.js
 mv vertical-stack-in-card.js /config/www/
 ```
 
@@ -48,9 +50,9 @@ resources:
 
 Alternatively, if you prefer the graphical editor, use the menu to add the resource.
 
-1. Make sure, **advanced mode** is enabled in your user profile (click on your user name to get there).
+1. Make sure **advanced mode** is enabled in your user profile (click on your user name to get there).
 
-2. Navigate to the **Configuration** -> **Lovelace Dashboards** -> **Resources**.
+2. Navigate to **Settings** -> **Dashboards** -> **Resources**.
 
 3. Click on **Add resource**, and fill out the form as follows:
 
@@ -79,6 +81,29 @@ cards:
       - light.ambient_lights
 ```
 
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Acknowledgements
 
+This project is a fork of the original [vertical-stack-in-card](https://github.com/ofekashery/vertical-stack-in-card) by [@ofekashery](https://github.com/ofekashery).
+
 Thanks to [@ciotlosm](https://github.com/ciotlosm) and [@thomasloven](https://github.com/thomasloven) for their inspiration and contributions in building the foundation of this project.
+
+## License
+
+[MIT](LICENSE)
+
+<!-- Badges -->
+
+[release-shield]: https://img.shields.io/github/v/release/foXaCe/vertical-stack-in-card?style=for-the-badge
+[downloads-shield]: https://img.shields.io/github/downloads/foXaCe/vertical-stack-in-card/total?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/foXaCe/vertical-stack-in-card?style=for-the-badge
+[stars]: https://github.com/foXaCe/vertical-stack-in-card/stargazers
+[releases]: https://github.com/foXaCe/vertical-stack-in-card/releases
+[hacs-shield]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge
+[hacs]: https://github.com/hacs/integration
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/foXaCe/vertical-stack-in-card/ci.yml?branch=master&style=for-the-badge&label=CI
+[ci]: https://github.com/foXaCe/vertical-stack-in-card/actions/workflows/ci.yml
+[license-shield]: https://img.shields.io/github/license/foXaCe/vertical-stack-in-card?style=for-the-badge
