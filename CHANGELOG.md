@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2](https://github.com/foXaCe/vertical-stack-in-card/compare/v1.1.1...v1.1.2) (2026-06-21)
+
+
+### Fixed
+
+* ignore superseded card builds when setConfig is called again ([b2fd473](https://github.com/foXaCe/vertical-stack-in-card/commit/b2fd47354722ac21d8f56c2dcb104a0fa5449d96))
+
+
+### Changed
+
+* dedupe _styleCard traversal and use instanceof guards ([b7ba5eb](https://github.com/foXaCe/vertical-stack-in-card/commit/b7ba5eb19d76fc4fd6396ad8dca5203880bed869))
+
 ## [1.1.1](https://github.com/foXaCe/vertical-stack-in-card/compare/v1.1.0...v1.1.1) (2026-06-21)
 
 
