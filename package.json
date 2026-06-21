@@ -1,0 +1,53 @@
+{
+  "name": "vertical-stack-in-card",
+  "version": "1.0.2",
+  "private": true,
+  "description": "Group multiple Home Assistant Lovelace cards into a single sleek card.",
+  "type": "module",
+  "license": "MIT",
+  "author": "foXaCe",
+  "homepage": "https://github.com/foXaCe/vertical-stack-in-card",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/foXaCe/vertical-stack-in-card.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "dev": "rollup -c -w",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "custom-card-helpers": "^1.9.0",
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^1.0.0",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@types/node": "^22.8.0",
+    "@vitest/coverage-v8": "^4.0.0",
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "happy-dom": "^20.0.0",
+    "prettier": "^3.3.3",
+    "rollup": "^4.24.0",
+    "tslib": "^2.8.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.12.0",
+    "vitest": "^4.0.0"
+  }
+}

@@ -31,10 +31,10 @@
 
 ### Manual Installation
 
-Download [`vertical-stack-in-card.js`](https://raw.githubusercontent.com/foXaCe/vertical-stack-in-card/master/vertical-stack-in-card.js) into your `<config directory>/www` directory.
+Download the bundled [`vertical-stack-in-card.js`](https://github.com/foXaCe/vertical-stack-in-card/releases/latest/download/vertical-stack-in-card.js) from the latest release into your `<config directory>/www` directory.
 
 ```bash
-wget https://raw.githubusercontent.com/foXaCe/vertical-stack-in-card/master/vertical-stack-in-card.js
+wget https://github.com/foXaCe/vertical-stack-in-card/releases/latest/download/vertical-stack-in-card.js
 mv vertical-stack-in-card.js /config/www/
 ```
 
@@ -44,7 +44,7 @@ If you configure Lovelace via YAML, add a reference to `vertical-stack-in-card.j
 
 ```yaml
 resources:
-  - url: /local/vertical-stack-in-card.js?v=1.0.1
+  - url: /local/vertical-stack-in-card.js?v=1.0.2
     type: js
 ```
 
@@ -56,7 +56,7 @@ Alternatively, if you prefer the graphical editor, use the menu to add the resou
 
 3. Click on **Add resource**, and fill out the form as follows:
 
-   - **Url:** `/local/vertical-stack-in-card.js?v=1.0.1`
+   - **Url:** `/local/vertical-stack-in-card.js?v=1.0.2`
    - **Resource type:** `JavaScript Module`
 
 4. Finish by clicking **Create** and refresh your browser.
@@ -80,6 +80,36 @@ cards:
       - switch.livingroom_ac
       - light.ambient_lights
 ```
+
+## Theming
+
+The card is intentionally theme-neutral: it adds no colours or fonts of its own and inherits the active Home Assistant theme (light, dark or custom). The inner cards are de-bordered and clipped to the themed corner radius (`--ha-card-border-radius`) so the stack reads as a single, unified `ha-card`.
+
+For advanced tweaks, the `styles` option sets raw CSS on every inner `ha-card`:
+
+```yaml
+type: custom:vertical-stack-in-card
+styles:
+  --ha-card-background: rgba(0, 0, 0, 0.3)
+cards:
+  - type: weather-forecast
+    entity: weather.home
+```
+
+## Development
+
+This card is written in TypeScript + [Lit](https://lit.dev) and bundled with Rollup (ES2022).
+
+```bash
+npm install        # install dependencies
+npm run dev        # watch & rebuild to dist/
+npm run build      # production bundle → dist/vertical-stack-in-card.js
+npm run lint       # ESLint
+npm run typecheck  # tsc --noEmit
+npm test           # Vitest unit tests
+```
+
+The bundle in `dist/vertical-stack-in-card.js` is what HACS distributes; it is rebuilt and attached to every GitHub release automatically.
 
 ## Contributing
 

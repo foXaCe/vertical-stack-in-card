@@ -15,17 +15,28 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    name: Lint & validate
+  build:
+    name: Lint, test & build
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
-      - name: Validate JS syntax
-        run: node --check vertical-stack-in-card.js
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type-check
+        run: npm run typecheck
+      - name: Format check
+        run: npm run format:check
+      - name: Unit tests
+        run: npm run test:coverage
+      - name: Build
+        run: npm run build
       - name: Validate hacs.json
         run: |
           jq empty hacs.json

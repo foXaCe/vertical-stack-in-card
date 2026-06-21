@@ -6,7 +6,7 @@
   "packages": {
     ".": {
       "package-name": "vertical-stack-in-card",
-      "extra-files": ["vertical-stack-in-card.js"]
+      "extra-files": ["src/const.ts"]
     }
   },
   "changelog-sections": [
