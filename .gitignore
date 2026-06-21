@@ -1,0 +1,28 @@
+# Node (si un toolchain est ajouté plus tard)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Editors / IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / coverage
+*.log
+coverage/
+
+# Local env
+.env
+.env.local
