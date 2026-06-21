@@ -186,14 +186,22 @@ export class VerticalStackInCard extends LitElement {
     }
   }
 
-  private _computeCardSize(card: LovelaceCard): number | Promise<number> {
+  private async _computeCardSize(card: LovelaceCard, retried = false): Promise<number> {
     if (typeof card.getCardSize === 'function') {
       return card.getCardSize();
     }
-    return customElements
-      .whenDefined(card.localName)
-      .then(() => this._computeCardSize(card))
-      .catch(() => 1);
+    // The element is not upgraded yet: wait for its definition once, then retry.
+    // The `retried` guard prevents an infinite loop if a custom element never
+    // exposes getCardSize even after being defined.
+    if (retried) {
+      return 1;
+    }
+    try {
+      await customElements.whenDefined(card.localName);
+    } catch {
+      return 1;
+    }
+    return this._computeCardSize(card, true);
   }
 
   public async getCardSize(): Promise<number> {

@@ -44,7 +44,7 @@ If you configure Lovelace via YAML, add a reference to `vertical-stack-in-card.j
 
 ```yaml
 resources:
-  - url: /local/vertical-stack-in-card.js?v=1.0.2
+  - url: /local/vertical-stack-in-card.js?v=1.1.0
     type: js
 ```
 
@@ -56,7 +56,7 @@ Alternatively, if you prefer the graphical editor, use the menu to add the resou
 
 3. Click on **Add resource**, and fill out the form as follows:
 
-   - **Url:** `/local/vertical-stack-in-card.js?v=1.0.2`
+   - **Url:** `/local/vertical-stack-in-card.js?v=1.1.0`
    - **Resource type:** `JavaScript Module`
 
 4. Finish by clicking **Create** and refresh your browser.

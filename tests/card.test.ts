@@ -239,6 +239,23 @@ describe('edge cases & lifecycle', () => {
 
     expect(await sizePromise).toBe(7);
   });
+
+  it('_computeCardSize falls back to 1 when a child never exposes getCardSize', async () => {
+    installCardHelpers();
+    const card = makeCard();
+    card.setConfig(config());
+
+    // The element gets defined but still has no getCardSize: the retry guard
+    // must stop after one attempt and return 1 instead of looping forever.
+    const child = document.createElement('x-sizeless-card') as unknown as HTMLElement;
+    const sizePromise = (
+      card as unknown as { _computeCardSize(c: HTMLElement): Promise<number> }
+    )._computeCardSize(child);
+
+    customElements.define('x-sizeless-card', class extends HTMLElement {});
+
+    expect(await sizePromise).toBe(1);
+  });
 });
 
 // Exercise the divider type alias used by HA helpers for completeness.

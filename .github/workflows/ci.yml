@@ -37,6 +37,12 @@ jobs:
         run: npm run test:coverage
       - name: Build
         run: npm run build
+      - name: Bundle size budget
+        run: |
+          MAX=51200
+          SIZE=$(stat -c%s dist/vertical-stack-in-card.js)
+          echo "Bundle: ${SIZE} bytes (budget: ${MAX})"
+          test "${SIZE}" -le "${MAX}"
       - name: Validate hacs.json
         run: |
           jq empty hacs.json
