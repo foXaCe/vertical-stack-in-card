@@ -1,36 +1,52 @@
 name: Release
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - 'master'
-    paths:
-      - 'VERSION'
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  tag-and-release:
+  release-please:
+    name: Release Please
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
 
-      - name: Set up Git
-        run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Create Git Tag
-        id: create_tag
-        run: |
-          VERSION=$(cat VERSION)
-          git tag -a "v$VERSION" -m "Release $VERSION"
-          git push origin "v$VERSION"
-
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION=$(cat VERSION)
-          gh release create "v$VERSION" vertical-stack-in-card.js --title "Release v$VERSION" --generate-notes
+  upload-asset:
+    name: Upload card asset
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+      - name: Generate checksum
+        run: sha256sum vertical-stack-in-card.js > vertical-stack-in-card.js.sha256
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: |
+            vertical-stack-in-card.js
+            vertical-stack-in-card.js.sha256
+          fail_on_unmatched_files: true

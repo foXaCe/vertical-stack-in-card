@@ -1,0 +1,48 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "forkProcessing": "enabled",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(deps)",
+    "group:allNonMajor",
+    ":dependencyDashboard",
+    ":enableVulnerabilityAlertsWithLabel('security')",
+    ":timezone(Europe/Paris)"
+  ],
+  "labels": ["dependencies"],
+  "assignees": ["foXaCe"],
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 4,
+  "rangeStrategy": "auto",
+  "rebaseWhen": "auto",
+  "minimumReleaseAge": "3 days",
+  "configMigration": true,
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard",
+  "pre-commit": {
+    "enabled": true
+  },
+  "vulnerabilityAlerts": {
+    "labels": ["security", "dependencies"],
+    "minimumReleaseAge": null,
+    "schedule": ["at any time"]
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "labels": ["dependencies", "github-actions"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true,
+      "platformAutomerge": true,
+      "addLabels": ["auto-merge"]
+    },
+    {
+      "matchManagers": ["pre-commit"],
+      "labels": ["dependencies", "pre-commit"]
+    }
+  ]
+}
