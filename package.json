@@ -28,7 +28,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "custom-card-helpers": "^1.9.0",
+    "custom-card-helpers": "^2.0.0",
     "lit": "^3.2.1"
   },
   "devDependencies": {
