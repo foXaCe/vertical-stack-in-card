@@ -6,7 +6,10 @@
   "packages": {
     ".": {
       "package-name": "vertical-stack-in-card",
-      "extra-files": ["src/const.ts"]
+      "extra-files": [
+        "src/const.ts",
+        { "type": "json", "path": "package.json", "jsonpath": "$.version" }
+      ]
     }
   },
   "changelog-sections": [
