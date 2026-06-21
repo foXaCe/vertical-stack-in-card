@@ -11,6 +11,15 @@
 
 ![Showcase Card](https://user-images.githubusercontent.com/16443111/220773923-c28009d6-edfc-4ffd-9290-3e0c6e1acf73.png)
 
+## Features
+
+- Combine any number of cards into one seamless `ha-card`
+- Optional horizontal layout
+- Custom CSS through the `styles` option
+- Native **Sections view** support (resizable, content-sized height)
+- Built-in **visual editor** (powered by Home Assistant's stack editor)
+- Theme-neutral: inherits the active Home Assistant theme (light, dark or custom)
+
 ## Configuration Options
 
 | Name         | Type    | Default | Description                                        |
@@ -44,7 +53,7 @@ If you configure Lovelace via YAML, add a reference to `vertical-stack-in-card.j
 
 ```yaml
 resources:
-  - url: /local/vertical-stack-in-card.js?v=1.1.0
+  - url: /local/vertical-stack-in-card.js?v=1.1.1
     type: js
 ```
 
@@ -56,7 +65,7 @@ Alternatively, if you prefer the graphical editor, use the menu to add the resou
 
 3. Click on **Add resource**, and fill out the form as follows:
 
-   - **Url:** `/local/vertical-stack-in-card.js?v=1.1.0`
+   - **Url:** `/local/vertical-stack-in-card.js?v=1.1.1`
    - **Resource type:** `JavaScript Module`
 
 4. Finish by clicking **Create** and refresh your browser.
