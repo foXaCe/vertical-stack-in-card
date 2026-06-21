@@ -145,12 +145,11 @@ export class VerticalStackInCard extends LitElement {
    * this is the card's entire purpose and cannot be done with CSS alone.
    */
   private _styleCard(node: Node | null): void {
-    if (!node) {
+    if (!(node instanceof HTMLElement)) {
       return;
     }
-    const element = node as HTMLElement;
-    const root = element.shadowRoot;
 
+    const root = node.shadowRoot;
     if (root) {
       const haCard = root.querySelector<HTMLElement>('ha-card');
       if (haCard) {
@@ -158,29 +157,23 @@ export class VerticalStackInCard extends LitElement {
         return;
       }
       const container = root.getElementById('root') ?? root.getElementById('card');
-      if (!container) {
-        return;
-      }
-      for (const child of Array.from(container.childNodes)) {
-        const childEl = child as HTMLElement;
-        if (childEl.style) {
-          childEl.style.margin = '0px';
-        }
-        this._styleCard(child);
+      if (container) {
+        this._zeroMarginsAndRecurse(container.childNodes);
       }
       return;
     }
 
-    if (typeof element.querySelector === 'function') {
-      const haCard = element.querySelector<HTMLElement>('ha-card');
-      if (haCard) {
-        this._applyStrip(haCard);
-      }
+    const haCard = node.querySelector<HTMLElement>('ha-card');
+    if (haCard) {
+      this._applyStrip(haCard);
     }
-    for (const child of Array.from(element.childNodes ?? [])) {
-      const childEl = child as HTMLElement;
-      if (childEl.style) {
-        childEl.style.margin = '0px';
+    this._zeroMarginsAndRecurse(node.childNodes);
+  }
+
+  private _zeroMarginsAndRecurse(children: NodeListOf<ChildNode>): void {
+    for (const child of Array.from(children)) {
+      if (child instanceof HTMLElement) {
+        child.style.margin = '0px';
       }
       this._styleCard(child);
     }

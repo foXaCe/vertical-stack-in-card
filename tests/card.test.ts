@@ -187,6 +187,24 @@ describe('_styleCard — unifying the inner cards', () => {
     const { strip } = cardWithStyles();
     expect(() => strip(null as unknown as Node)).not.toThrow();
   });
+
+  it('recurses into a nested #card container (fallback selector)', () => {
+    const { strip } = cardWithStyles();
+    const stack = document.createElement('div');
+    const shadow = stack.attachShadow({ mode: 'open' });
+    const card = document.createElement('div');
+    card.id = 'card'; // note: #card, not #root
+    const inner = childWithHaCard();
+    card.appendChild(inner);
+    shadow.appendChild(card);
+
+    strip(stack);
+
+    expect((inner as HTMLElement).style.margin).toBe('0px');
+    expect((inner.shadowRoot!.querySelector('ha-card') as HTMLElement).style.boxShadow).toBe(
+      'none',
+    );
+  });
 });
 
 describe('edge cases & lifecycle', () => {
