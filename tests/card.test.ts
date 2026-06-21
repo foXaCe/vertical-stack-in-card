@@ -274,6 +274,62 @@ describe('edge cases & lifecycle', () => {
 
     expect(await sizePromise).toBe(1);
   });
+
+  it('_computeCardSize returns 1 when whenDefined rejects', async () => {
+    installCardHelpers();
+    const card = makeCard();
+    card.setConfig(config());
+
+    const spy = vi.spyOn(customElements, 'whenDefined').mockRejectedValue(new Error('nope'));
+    const child = document.createElement('div'); // no getCardSize → takes the whenDefined path
+
+    const size = await (
+      card as unknown as { _computeCardSize(c: HTMLElement): Promise<number> }
+    )._computeCardSize(child);
+
+    expect(size).toBe(1);
+    spy.mockRestore();
+  });
+
+  it('waits for a child updateComplete before styling it', async () => {
+    let resolveChild!: () => void;
+    const childReady = new Promise<void>((r) => {
+      resolveChild = r;
+    });
+    const child = document.createElement('div') as unknown as {
+      getCardSize: () => number;
+      updateComplete: Promise<void>;
+      shadowRoot: ShadowRoot;
+    };
+    (child as unknown as HTMLElement)
+      .attachShadow({ mode: 'open' })
+      .appendChild(document.createElement('ha-card'));
+    child.getCardSize = () => 1;
+    child.updateComplete = childReady;
+
+    (window as unknown as { loadCardHelpers: unknown }).loadCardHelpers = vi.fn(async () => ({
+      createCardElement: () => child,
+      createRowElement: () => child,
+    }));
+
+    const card = document.createElement('vertical-stack-in-card') as unknown as {
+      setConfig: (c: unknown) => void;
+      getCardSize: () => Promise<number>;
+      updateComplete: Promise<unknown>;
+    };
+    document.body.appendChild(card as unknown as HTMLElement);
+    card.setConfig({ type: 'custom:vertical-stack-in-card', cards: [{ type: 'x' }] });
+    await card.getCardSize();
+    await card.updateComplete;
+
+    const haCard = child.shadowRoot.querySelector('ha-card') as HTMLElement;
+    resolveChild();
+    await childReady;
+    await Promise.resolve();
+
+    expect(haCard.style.boxShadow).toBe('none');
+    (card as unknown as HTMLElement).remove();
+  });
 });
 
 describe('setConfig race', () => {
