@@ -29,7 +29,7 @@ Utilisez le [template de feature request](.github/ISSUE_TEMPLATE/feature_request
    npm run build        # bundle → dist/
    ```
 5. Commit en [Conventional Commits](https://www.conventionalcommits.org/) : `feat: …`, `fix: …`, `docs: …`
-6. Ouvrez une PR vers `master`
+6. Ouvrez une PR vers `main`
 
 Les commits conventionnels alimentent automatiquement le changelog et le bump de version via release-please.
 

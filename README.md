@@ -134,6 +134,6 @@ Thanks to [@ciotlosm](https://github.com/ciotlosm) and [@thomasloven](https://gi
 [releases]: https://github.com/foXaCe/vertical-stack-in-card/releases
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge
 [hacs]: https://github.com/hacs/integration
-[ci-shield]: https://img.shields.io/github/actions/workflow/status/foXaCe/vertical-stack-in-card/ci.yml?branch=master&style=for-the-badge&label=CI
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/foXaCe/vertical-stack-in-card/ci.yml?branch=main&style=for-the-badge&label=CI
 [ci]: https://github.com/foXaCe/vertical-stack-in-card/actions/workflows/ci.yml
 [license-shield]: https://img.shields.io/github/license/foXaCe/vertical-stack-in-card?style=for-the-badge
