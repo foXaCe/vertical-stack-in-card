@@ -1,4 +1,4 @@
-const CARD_VERSION = '1.0.1'; // x-release-please-version
+const CARD_VERSION = '1.0.2'; // x-release-please-version
 
 console.log(
   `%cvertical-stack-in-card\n%cVersion: ${CARD_VERSION}`,
