@@ -1,6 +1,6 @@
 {
   "name": "vertical-stack-in-card",
-  "version": "1.0.2",
+  "version": "1.1.1",
   "private": true,
   "description": "Group multiple Home Assistant Lovelace cards into a single sleek card.",
   "type": "module",
