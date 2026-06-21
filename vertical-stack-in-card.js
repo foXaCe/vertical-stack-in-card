@@ -1,5 +1,7 @@
+const CARD_VERSION = '1.0.1'; // x-release-please-version
+
 console.log(
-  `%cvertical-stack-in-card\n%cVersion: ${'1.0.1'}`,
+  `%cvertical-stack-in-card\n%cVersion: ${CARD_VERSION}`,
   'color: #1976d2; font-weight: bold;',
   ''
 );
@@ -199,5 +201,5 @@ window.customCards.push({
   name: 'Vertical Stack In Card',
   description: 'Group multiple cards into a single sleek card.',
   preview: false,
-  documentationURL: 'https://github.com/ofekashery/vertical-stack-in-card',
+  documentationURL: 'https://github.com/foXaCe/vertical-stack-in-card',
 });
