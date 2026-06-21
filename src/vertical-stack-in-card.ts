@@ -31,6 +31,7 @@ export class VerticalStackInCard extends LitElement {
   private _hass?: HomeAssistant;
   private _refCards: LovelaceCard[] = [];
   private _cardSize: Deferred = deferred();
+  private _buildGeneration = 0;
 
   public setConfig(config: VerticalStackInCardConfig): void {
     if (!config || !Array.isArray(config.cards)) {
@@ -60,9 +61,15 @@ export class VerticalStackInCard extends LitElement {
     if (!config) {
       return;
     }
-    this._refCards = await Promise.all(
+    const generation = ++this._buildGeneration;
+    const cards = await Promise.all(
       config.cards.map((cardConfig) => this._createCardElement(cardConfig)),
     );
+    // A newer setConfig started another build while we awaited — discard ours.
+    if (generation !== this._buildGeneration) {
+      return;
+    }
+    this._refCards = cards;
     this.requestUpdate();
     this._cardSize.resolve();
   }

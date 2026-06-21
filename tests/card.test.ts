@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LovelaceCardConfig } from 'custom-card-helpers';
 
 import { VerticalStackInCard } from '../src/vertical-stack-in-card';
@@ -255,6 +255,62 @@ describe('edge cases & lifecycle', () => {
     customElements.define('x-sizeless-card', class extends HTMLElement {});
 
     expect(await sizePromise).toBe(1);
+  });
+});
+
+describe('setConfig race', () => {
+  function makeDeferred<T = void>(): { promise: Promise<T>; resolve: (v: T) => void } {
+    let resolve!: (v: T) => void;
+    const promise = new Promise<T>((r) => {
+      resolve = r;
+    });
+    return { promise, resolve };
+  }
+
+  /** Drain the microtask queue thoroughly (Promise chains can be several levels deep). */
+  async function flushMicrotasks(rounds = 20): Promise<void> {
+    for (let i = 0; i < rounds; i++) {
+      await Promise.resolve();
+    }
+  }
+
+  it('a superseded build does not overwrite the newer config', async () => {
+    const gate = makeDeferred();
+    let firstCall = true;
+    const makeEl = (cfg: { type: string }) => {
+      const el = document.createElement('div') as unknown as {
+        getCardSize: () => number;
+        _type: string;
+      };
+      el.getCardSize = () => 1;
+      el._type = cfg.type;
+      return el;
+    };
+    (window as unknown as { loadCardHelpers: unknown }).loadCardHelpers = vi.fn(async () => {
+      if (firstCall) {
+        firstCall = false;
+        await gate.promise; // gate ONLY the first build's child creation
+      }
+      return { createCardElement: makeEl, createRowElement: makeEl };
+    });
+
+    const card = document.createElement('vertical-stack-in-card') as unknown as {
+      setConfig: (c: unknown) => void;
+      _refCards: { _type: string }[];
+    };
+
+    card.setConfig({ type: 'custom:vertical-stack-in-card', cards: [{ type: 'OLD' }] });
+    card.setConfig({ type: 'custom:vertical-stack-in-card', cards: [{ type: 'NEW' }] });
+
+    // Let the NEW build (unblocked) complete before we release the OLD gate.
+    await flushMicrotasks();
+
+    gate.resolve();
+
+    // Give the released OLD build enough ticks to reach its _refCards assignment.
+    await flushMicrotasks();
+
+    expect(card._refCards.map((c) => c._type)).toEqual(['NEW']);
   });
 });
 
