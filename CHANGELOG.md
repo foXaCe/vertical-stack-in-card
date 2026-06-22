@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5](https://github.com/foXaCe/vertical-stack-in-card/compare/v1.1.4...v1.1.5) (2026-06-22)
+
+
+### Miscellaneous
+
+* release 1.1.5 ([#27](https://github.com/foXaCe/vertical-stack-in-card/issues/27)) ([6eb5cdb](https://github.com/foXaCe/vertical-stack-in-card/commit/6eb5cdb78fbc1da42804ed3e4d238db2df9d65b8))
+
 ## [1.1.4](https://github.com/foXaCe/vertical-stack-in-card/compare/v1.1.3...v1.1.4) (2026-06-22)
 
 
