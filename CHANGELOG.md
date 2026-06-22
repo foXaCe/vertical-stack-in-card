@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3](https://github.com/foXaCe/vertical-stack-in-card/compare/v1.1.2...v1.1.3) (2026-06-22)
+
+
+### Fixed
+
+* keep the Sections view grid resizable on both axes ([7ea2d94](https://github.com/foXaCe/vertical-stack-in-card/commit/7ea2d94d326200681be335f9ab110afd8cb6da13))
+
 ## [1.1.2](https://github.com/foXaCe/vertical-stack-in-card/compare/v1.1.1...v1.1.2) (2026-06-21)
 
 
