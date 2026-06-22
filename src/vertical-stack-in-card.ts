@@ -114,7 +114,10 @@ export class VerticalStackInCard extends LitElement {
       return nothing;
     }
     return html`
-      <ha-card .header=${this._config.title}>
+      <ha-card>
+        ${this._config.title
+          ? html`<h1 class="card-header">${this._config.title}</h1>`
+          : nothing}
         <div id="root" class=${classMap({ horizontal: Boolean(this._config.horizontal) })}>
           ${this._refCards}
         </div>
@@ -211,40 +214,35 @@ export class VerticalStackInCard extends LitElement {
   }
 
   /**
-   * Grid options for the Sections view. We suggest an initial height from the
-   * children's combined size but keep BOTH dimensions resizable — a numeric
-   * `rows` with `min_rows`/`max_rows`. Using `rows: 'auto'` here would lock the
-   * vertical resize handle, which is not what a user dragging a stack expects.
+   * Grid options for the Sections view — mirrors Home Assistant's own stack
+   * cards (see `hui-stack-card.ts`). The critical value is `rows: 'auto'`: a
+   * stack is a content container whose height is the sum of its children, so the
+   * height MUST follow the content, never a fixed pixel count.
+   *
+   * How HA reads this (verified in `compute-card-grid-size.ts` /
+   * `hui-grid-section.ts`): a NUMERIC `rows` adds the `fit-rows` class and forces
+   * `height: calc(rows * 64px)` — a fixed height that overflows when the content
+   * is taller and disagrees with the content-sized editor preview. A string
+   * `rows: 'auto'` skips `fit-rows` and uses `grid-auto-rows: auto` instead, so
+   * the card is content-sized in BOTH the live grid and the editor preview.
+   *
+   * `fixed_rows: true` tells newer HA to lock the row handle (height is
+   * content-driven); older versions ignore the key harmlessly. The width stays
+   * resizable (`min_columns`/default `max_columns`) and HA persists the chosen
+   * `grid_options.columns` on its own.
    */
   public getGridOptions(): {
     columns: number;
-    rows: number;
+    rows: 'auto';
     min_columns: number;
-    max_columns: number;
-    min_rows: number;
-    max_rows: number;
+    fixed_rows: boolean;
   } {
     return {
       columns: 12,
-      rows: this._estimateRows(),
+      rows: 'auto',
       min_columns: 3,
-      max_columns: 12,
-      min_rows: 1,
-      max_rows: 100,
+      fixed_rows: true,
     };
-  }
-
-  /** Best-effort initial row count, summed from the children's reported sizes. */
-  private _estimateRows(): number {
-    if (this._refCards.length === 0) {
-      return 3;
-    }
-    let total = 0;
-    for (const card of this._refCards) {
-      const size = typeof card.getCardSize === 'function' ? card.getCardSize() : 1;
-      total += typeof size === 'number' && size > 0 ? size : 1;
-    }
-    return Math.max(1, Math.round(total));
   }
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
@@ -265,18 +263,25 @@ export class VerticalStackInCard extends LitElement {
 
     const editor = await cls.getConfigElement();
 
-    // The stock editor only understands `title` and `cards`. Keep the
-    // VSIC-only options (`horizontal`, `styles`) alive across edits: stash them
-    // on the way in and merge them back into every emitted config so the visual
-    // editor never silently drops a user's YAML-only settings.
-    let extras: Partial<VerticalStackInCardConfig> = {};
+    // The stock vertical-stack editor only understands `type`, `title` and
+    // `cards`; it re-emits a config stripped of everything else. That includes
+    // our own `horizontal`/`styles` AND every layout property Home Assistant
+    // injects into the card config — most importantly `grid_options` (the user's
+    // Sections resize), plus `view_layout`, `layout_options`, `visibility`, …
+    // Dropping `grid_options` is what made the card reset to its default size as
+    // soon as the editor was opened. So we stash ALL non-managed keys on the way
+    // in and merge them back into every emitted config.
+    const MANAGED = new Set(['type', 'title', 'cards']);
+    let extras: Record<string, unknown> = {};
 
     const originalSetConfig = editor.setConfig.bind(editor);
     editor.setConfig = (config: LovelaceCardConfig): void => {
-      const incoming = config as VerticalStackInCardConfig;
       extras = {};
-      if (incoming.horizontal !== undefined) extras.horizontal = incoming.horizontal;
-      if (incoming.styles !== undefined) extras.styles = incoming.styles;
+      for (const [key, value] of Object.entries(config)) {
+        if (!MANAGED.has(key)) {
+          extras[key] = value;
+        }
+      }
       originalSetConfig({
         type: config.type,
         title: config.title,
@@ -288,8 +293,8 @@ export class VerticalStackInCard extends LitElement {
       'config-changed',
       (ev: Event): void => {
         const detail = (ev as CustomEvent<{ config?: LovelaceCardConfig }>).detail;
-        const current = detail?.config;
-        const keys = Object.keys(extras) as (keyof VerticalStackInCardConfig)[];
+        const current = detail?.config as Record<string, unknown> | undefined;
+        const keys = Object.keys(extras);
         if (!current || keys.length === 0) return;
         // Already carries the extras (our own re-dispatch) — let it bubble.
         if (keys.every((key) => current[key] === extras[key])) return;
@@ -312,25 +317,53 @@ export class VerticalStackInCard extends LitElement {
     return { cards: [] };
   }
 
-  // This card is intentionally theme-neutral: it adds no colours, fonts or
-  // animations of its own. The wrapping ha-card inherits the active Home
-  // Assistant theme (light, dark or custom) for free, and the children are
-  // de-bordered then clipped to the themed corner radius so the whole stack
-  // reads as one unified, Material-3-compliant card. Layout is direction-aware
-  // (flex), so right-to-left themes work without any extra rules.
+  // Sizing mirrors Home Assistant's built-in stack card so the card behaves
+  // exactly as HA's Sections view expects: a full-height flex column whose
+  // #root flexes to fill the space below the header. This keeps the card within
+  // the grid cell HA allocates instead of overflowing. The card stays
+  // theme-neutral (no own colours): the ha-card inherits the active theme and
+  // the children are de-bordered then clipped to the themed corner radius.
   static styles: CSSResultGroup = css`
     :host {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
-    /* Clip the flush, border-less children to --ha-card-border-radius so the
-       unified card keeps correctly rounded corners in every theme. */
+    /* Header, copied verbatim from HA's built-in stack card. */
+    .card-header {
+      color: var(--ha-card-header-color, var(--primary-text-color));
+      text-align: var(--ha-stack-title-text-align, start);
+      font-family: var(--ha-card-header-font-family, inherit);
+      font-size: var(--ha-card-header-font-size, var(--ha-font-size-2xl));
+      font-weight: var(--ha-font-weight-normal);
+      margin-block-start: 0;
+      margin-block-end: 0;
+      letter-spacing: -0.012em;
+      line-height: var(--ha-line-height-condensed);
+      display: block;
+      padding: 24px 16px 16px;
+    }
+
+    /* Fill the allocated grid cell and clip the flush, border-less children to
+       --ha-card-border-radius so the stack reads as one unified card. */
     ha-card {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
       overflow: hidden;
     }
 
-    #root.horizontal {
+    #root {
       display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    #root.horizontal {
+      flex-direction: row;
     }
 
     #root.horizontal > * {

@@ -44,8 +44,8 @@ mutation is the card's core purpose and cannot be expressed with CSS alone.
 | `render()` / `updated()` | Renders the wrapping `ha-card`; styles the children after they update. |
 | `_styleCard(node)` | Recursively de-borders inner cards and applies custom `styles`. |
 | `getCardSize()` | Aggregates child sizes for the Masonry layout. |
-| `getGridOptions()` | Sections view footprint (full width, auto height, resizable). |
-| `getConfigElement()` | Delegates to HA's built-in stack editor; preserves `horizontal`/`styles`. |
+| `getGridOptions()` | Sections-view footprint: full width, **content height** (`rows: 'auto'`, mirroring HA's native stack — a numeric `rows` would force a fixed pixel height and overflow), width-resizable, `fixed_rows`. |
+| `getConfigElement()` | Delegates to HA's built-in stack editor; re-injects **every** key the stock editor drops — `grid_options` (the Sections resize), `horizontal`, `styles`, … — so editing never resets the card's size. |
 | `getStubConfig()` | Default config when the card is added from the UI. |
 
 ## Notes
