@@ -43,6 +43,12 @@
     {
       "matchManagers": ["pre-commit"],
       "labels": ["dependencies", "pre-commit"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchDepNames": ["node"],
+      "enabled": false,
+      "description": "CI Node versions are pinned on purpose: the build job tracks current Node, the compat job verifies the Node 20 engines floor. Renovate must not bump either."
     }
   ]
 }
