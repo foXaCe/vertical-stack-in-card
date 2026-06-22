@@ -93,27 +93,18 @@ describe('sizing & grid', () => {
     expect(await card.getCardSize()).toBe(3);
   });
 
-  it('getGridOptions stays resizable on both axes (no locked handle)', () => {
+  it('getGridOptions is content-sized (rows: auto), mirroring the native stack', () => {
+    // The height of a stack follows its content. HA only fixes the pixel height
+    // when `rows` is a NUMBER (the `fit-rows` path); `rows: 'auto'` keeps the
+    // card content-sized in both the grid and the editor preview. A numeric
+    // `rows` here is the bug that overflows and desyncs the editor.
     const card = makeCard();
     const opts = card.getGridOptions();
+    expect(opts.rows).toBe('auto');
+    expect(typeof opts.rows).not.toBe('number');
     expect(opts.columns).toBe(12);
-    expect(opts.columns % 3).toBe(0);
-    expect(opts.min_columns % 3).toBe(0);
-    expect(opts.max_columns).toBe(12);
-    // `rows` must be a number (not 'auto'), and both dimensions must keep
-    // min < max so Home Assistant shows the resize handles.
-    expect(typeof opts.rows).toBe('number');
-    expect(opts.rows).toBeGreaterThan(0);
-    expect(opts.min_columns).toBeLessThan(opts.max_columns);
-    expect(opts.min_rows).toBeLessThan(opts.max_rows);
-  });
-
-  it('getGridOptions estimates initial rows from the children sizes', async () => {
-    const card = makeCard();
-    card.setConfig(config({ cards: [{ type: 'a' }, { type: 'b' }] }));
-    await card.getCardSize();
-    // Two children of size 1 → rows 2 (summed), not the empty-stack fallback (3).
-    expect(card.getGridOptions().rows).toBe(2);
+    expect(opts.min_columns).toBe(3);
+    expect(opts.fixed_rows).toBe(true);
   });
 
   it('getStubConfig returns an empty cards list', () => {
@@ -406,5 +397,66 @@ describe('config typing', () => {
   it('treats a divider as a valid card entry', () => {
     const entry: LovelaceCardConfig = { type: 'divider' };
     expect(entry.type).toBe('divider');
+  });
+});
+
+describe('visual editor (getConfigElement)', () => {
+  // The visual editor wraps HA's built-in vertical-stack editor, which only
+  // understands type/title/cards. Stand in a fake built-in editor so we can
+  // assert the wrapper preserves every other key it re-emits.
+  class FakeStackEditor extends HTMLElement {
+    public config?: unknown;
+    public setConfig(config: unknown): void {
+      this.config = config;
+    }
+  }
+  class FakeStackCard extends HTMLElement {
+    public static async getConfigElement(): Promise<HTMLElement> {
+      if (!customElements.get('fake-stack-editor')) {
+        customElements.define('fake-stack-editor', FakeStackEditor);
+      }
+      return document.createElement('fake-stack-editor');
+    }
+  }
+  if (!customElements.get('hui-vertical-stack-card')) {
+    customElements.define('hui-vertical-stack-card', FakeStackCard);
+  }
+
+  it('preserves grid_options (and horizontal) when the inner editor re-emits without them', async () => {
+    const editor = await VerticalStackInCard.getConfigElement();
+    editor.setConfig({
+      type: 'custom:vertical-stack-in-card',
+      title: 'X',
+      cards: [{ type: 'a' }],
+      grid_options: { columns: 9, rows: 5 },
+      horizontal: true,
+    } as unknown as LovelaceCardConfig);
+
+    let emitted: Record<string, unknown> | undefined;
+    editor.addEventListener('config-changed', (ev) => {
+      emitted = (ev as CustomEvent<{ config: Record<string, unknown> }>).detail.config;
+    });
+
+    // The stock inner editor re-emits a config that dropped grid_options and
+    // horizontal — exactly the regression that reset the card's size on edit.
+    editor.dispatchEvent(
+      new CustomEvent('config-changed', {
+        detail: {
+          config: {
+            type: 'custom:vertical-stack-in-card',
+            title: 'X',
+            cards: [{ type: 'a' }, { type: 'b' }],
+          },
+        },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+
+    expect(emitted).toBeDefined();
+    expect(emitted?.grid_options).toEqual({ columns: 9, rows: 5 });
+    expect(emitted?.horizontal).toBe(true);
+    // The user's own edit (a new child) must survive too.
+    expect((emitted?.cards as unknown[]).length).toBe(2);
   });
 });
