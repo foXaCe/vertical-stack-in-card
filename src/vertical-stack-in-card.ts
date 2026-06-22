@@ -211,22 +211,40 @@ export class VerticalStackInCard extends LitElement {
   }
 
   /**
-   * Grid options for the Sections view. The stack height equals the sum of its
-   * children, so we let Home Assistant auto-size the rows. It defaults to the
-   * full 12-column width and may be shrunk to a quarter.
+   * Grid options for the Sections view. We suggest an initial height from the
+   * children's combined size but keep BOTH dimensions resizable — a numeric
+   * `rows` with `min_rows`/`max_rows`. Using `rows: 'auto'` here would lock the
+   * vertical resize handle, which is not what a user dragging a stack expects.
    */
   public getGridOptions(): {
-    columns: number | 'full';
-    rows: number | 'auto';
+    columns: number;
+    rows: number;
     min_columns: number;
     max_columns: number;
+    min_rows: number;
+    max_rows: number;
   } {
     return {
       columns: 12,
-      rows: 'auto',
+      rows: this._estimateRows(),
       min_columns: 3,
       max_columns: 12,
+      min_rows: 1,
+      max_rows: 100,
     };
+  }
+
+  /** Best-effort initial row count, summed from the children's reported sizes. */
+  private _estimateRows(): number {
+    if (this._refCards.length === 0) {
+      return 3;
+    }
+    let total = 0;
+    for (const card of this._refCards) {
+      const size = typeof card.getCardSize === 'function' ? card.getCardSize() : 1;
+      total += typeof size === 'number' && size > 0 ? size : 1;
+    }
+    return Math.max(1, Math.round(total));
   }
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {

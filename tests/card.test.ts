@@ -93,14 +93,27 @@ describe('sizing & grid', () => {
     expect(await card.getCardSize()).toBe(3);
   });
 
-  it('getGridOptions returns Sections options with columns multiple of 3', () => {
+  it('getGridOptions stays resizable on both axes (no locked handle)', () => {
     const card = makeCard();
     const opts = card.getGridOptions();
     expect(opts.columns).toBe(12);
-    expect((opts.columns as number) % 3).toBe(0);
+    expect(opts.columns % 3).toBe(0);
     expect(opts.min_columns % 3).toBe(0);
     expect(opts.max_columns).toBe(12);
-    expect(opts.rows).toBe('auto');
+    // `rows` must be a number (not 'auto'), and both dimensions must keep
+    // min < max so Home Assistant shows the resize handles.
+    expect(typeof opts.rows).toBe('number');
+    expect(opts.rows).toBeGreaterThan(0);
+    expect(opts.min_columns).toBeLessThan(opts.max_columns);
+    expect(opts.min_rows).toBeLessThan(opts.max_rows);
+  });
+
+  it('getGridOptions estimates initial rows from the children sizes', async () => {
+    const card = makeCard();
+    card.setConfig(config({ cards: [{ type: 'a' }, { type: 'b' }] }));
+    await card.getCardSize();
+    // Two children of size 1 → rows 2 (summed), not the empty-stack fallback (3).
+    expect(card.getGridOptions().rows).toBe(2);
   });
 
   it('getStubConfig returns an empty cards list', () => {
