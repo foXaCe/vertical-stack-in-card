@@ -115,9 +115,7 @@ export class VerticalStackInCard extends LitElement {
     }
     return html`
       <ha-card>
-        ${this._config.title
-          ? html`<h1 class="card-header">${this._config.title}</h1>`
-          : nothing}
+        ${this._config.title ? html`<h1 class="card-header">${this._config.title}</h1>` : nothing}
         <div id="root" class=${classMap({ horizontal: Boolean(this._config.horizontal) })}>
           ${this._refCards}
         </div>
