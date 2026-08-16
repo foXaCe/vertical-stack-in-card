@@ -249,8 +249,7 @@ export class VerticalStackInCard extends LitElement {
     // and it comes fully localised by HA, including French.
     type StackEditorCtor = { getConfigElement(): Promise<LovelaceCardEditor> };
     let cls = customElements.get('hui-vertical-stack-card') as unknown as
-      | StackEditorCtor
-      | undefined;
+      StackEditorCtor | undefined;
 
     if (!cls) {
       const helpers = await window.loadCardHelpers!();

@@ -81,8 +81,7 @@ describe('getConfigElement (delegated built-in editor)', () => {
     );
 
     const merged = emitted.find((c) => (c as Record<string, unknown>).horizontal === true) as
-      | Record<string, unknown>
-      | undefined;
+      Record<string, unknown> | undefined;
     expect(merged).toBeTruthy();
     expect(merged?.styles).toEqual({ '--ha-card-background': 'transparent' });
     // The user's card edits are preserved alongside the re-injected options.
