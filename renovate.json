@@ -10,8 +10,12 @@
     ":enableVulnerabilityAlertsWithLabel('security')",
     ":timezone(Europe/Paris)"
   ],
-  "labels": ["dependencies"],
-  "assignees": ["foXaCe"],
+  "labels": [
+    "dependencies"
+  ],
+  "assignees": [
+    "foXaCe"
+  ],
   "prConcurrentLimit": 10,
   "prHourlyLimit": 4,
   "rangeStrategy": "auto",
@@ -24,29 +28,66 @@
     "enabled": true
   },
   "vulnerabilityAlerts": {
-    "labels": ["security", "dependencies"],
+    "labels": [
+      "security",
+      "dependencies"
+    ],
     "minimumReleaseAge": null,
-    "schedule": ["at any time"]
+    "schedule": [
+      "at any time"
+    ]
   },
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
-      "labels": ["dependencies", "github-actions"]
+      "description": "Pause majors: typescript-eslint n'a pas de version compatible TS7",
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
     },
     {
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "matchManagers": [
+        "github-actions"
+      ],
+      "labels": [
+        "dependencies",
+        "github-actions"
+      ]
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
       "automerge": true,
       "platformAutomerge": true,
-      "addLabels": ["auto-merge"]
+      "addLabels": [
+        "auto-merge"
+      ]
     },
     {
-      "matchManagers": ["pre-commit"],
-      "labels": ["dependencies", "pre-commit"]
+      "matchManagers": [
+        "pre-commit"
+      ],
+      "labels": [
+        "dependencies",
+        "pre-commit"
+      ]
     },
     {
-      "matchManagers": ["github-actions"],
-      "matchDepNames": ["node"],
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchDepNames": [
+        "node"
+      ],
       "enabled": false,
       "description": "CI Node versions are pinned on purpose: the build job tracks current Node, the compat job verifies the Node 20 engines floor. Renovate must not bump either."
     }
