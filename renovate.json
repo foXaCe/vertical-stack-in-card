@@ -23,7 +23,7 @@
   "minimumReleaseAge": "3 days",
   "configMigration": true,
   "dependencyDashboard": true,
-  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard",
+  "dependencyDashboardTitle": "\ud83d\udce6 Renovate Dependency Dashboard",
   "pre-commit": {
     "enabled": true
   },
@@ -90,6 +90,16 @@
       ],
       "enabled": false,
       "description": "CI Node versions are pinned on purpose: the build job tracks current Node, the compat job verifies the Node 20 engines floor. Renovate must not bump either."
+    },
+    {
+      "description": "Tout ce qui monte se fusionne seul quand la CI est verte (op\u00e9rateur, 2026-10-14)",
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "automerge": true,
+      "platformAutomerge": true
     }
-  ]
+  ],
+  "rollbackPrs": false
 }
